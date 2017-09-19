@@ -16,7 +16,9 @@ var storage = multer.diskStorage({
   destination:'tmp/image',// 设置存储路径
   filename: function (req, file, cb) {
     // 设置存储文件名
-    cb(null, file.originalname)
+    var fileFormat = (file.originalname).split(".");
+    cb(null, file.fieldname + '-' + Date.now() + "." + fileFormat[fileFormat.length - 1]);
+    // cb(null, file.originalname)
   }
 })
 
@@ -32,14 +34,14 @@ app.get('/',function(req,res){
 })
  
 app.post('/upload',upload.array('img',12), function (req, res) {
- 
+    console.log(req.files[0])
     var des_file = __dirname + "/" + req.files[0].originalname;
     fs.readFile( req.files[0].path, function (err, data) {
         
         res.json({
           message:'File uploaded successfully', 
           filename:req.files[0].originalname,
-          src:'http://127.0.0.1:3000/image/'+req.files[0].originalname
+          src:'http://127.0.0.1:3000/image/'+req.files[0].filename
         })
 
     });
